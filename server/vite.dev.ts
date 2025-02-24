@@ -26,24 +26,14 @@ export async function setupVite(app: Express, server: any) {
   const viteConfig = await import('../vite.config');
   const viteLogger = createLogger();
 
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: ['localhost'],
-  };
-
   const vite = await createViteServer({
     ...viteConfig.default,
     configFile: false,
-    customLogger: {
-      ...viteLogger,
-      error: (msg: any, options: any) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
-      },
+    server: {
+      middlewareMode: true,
+      hmr: { server },
     },
-    server: serverOptions,
-    appType: "custom",
+    appType: 'spa',
   });
 
   app.use(vite.middlewares);
