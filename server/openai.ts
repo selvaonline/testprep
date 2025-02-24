@@ -59,7 +59,8 @@ async function generateQuestion(grade: number, subject: string): Promise<Generat
           content: `Generate a ${subject} question for grade ${grade} that tests a key concept from the curriculum.`
         }
       ],
-      response_format: { type: "json_object" }
+      temperature: 0.7,
+      max_tokens: 1000
     });
 
     const content = response.choices[0].message.content;
@@ -94,7 +95,8 @@ Correct Answer: ${question.answer}
 User Answer: ${userAnswer}`
         }
       ],
-      response_format: { type: "json_object" }
+      temperature: 0.7,
+      max_tokens: 500
     });
 
     const content = response.choices[0].message.content;
