@@ -1,11 +1,11 @@
 import express, { type Express } from "express";
 import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-import { type Server } from "http";
+import path from "path";
 import { nanoid } from "nanoid";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -18,7 +18,7 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-export async function setupVite(app: Express, server: Server) {
+export async function setupVite(app: Express, server: any) {
   if (process.env.NODE_ENV === 'production') {
     throw new Error('setupVite should not be called in production mode');
   }
@@ -75,18 +75,14 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(process.cwd(), "dist", "public");
+  const publicPath = path.join(process.cwd(), "dist", "public");
+  const indexPath = path.join(publicPath, "index.html");
 
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+  if (!fs.existsSync(publicPath) || !fs.existsSync(indexPath)) {
+    throw new Error("Could not find the build directory. Make sure to build the client first");
   }
 
-  app.use(express.static(distPath));
+  app.use(express.static(publicPath));
+  app.get("*", (_req, res) => res.sendFile(indexPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
-  });
 }
