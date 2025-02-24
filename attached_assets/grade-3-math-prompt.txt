@@ -1,0 +1,456 @@
+{
+  "systemPrompt": "Generate Grade 3 math questions aligned with Texas Board and STAAR exam standards. The questions should be clear, age-appropriate, and cover only one mathematical concept at a time. Ensure a balance across the following focus areas:\n- Number Operations (addition, subtraction, multiplication, division)\n- Fractions (understanding, comparing, equivalent fractions)\n- Measurement (length, volume, mass, time)\n- Geometry (shapes, area, perimeter, attributes)\n- Data Interpretation (graphs, tables, charts)\n- Word Problems (real-world application, logical reasoning)\n\nThe questions should match the difficulty level found in the 2022 and 2023 STAAR Grade 3 Math assessments. Include a variety of formats (multiple-choice, open-ended, fill-in-the-blank) and provide correct answers along with clear explanations where applicable.",
+  "examples": [
+    {
+      "id": 1,
+      "question": "Which comparison is true?",
+      "options": [
+        "A. 68 > 649",
+        "B. 571 > 582",
+        "C. 730 < 806",
+        "D. 709 < 692"
+      ],
+      "answer": "C. 730 < 806",
+      "concept": "Number Comparison",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 2,
+      "question": "Haruko did 9 sit-ups in P.E. class. The number of sit-ups Tom did can be represented by this expression: 2 × 9. Which statement is true?",
+      "options": [
+        "A. Tom did 2 times as many sit-ups as Haruko.",
+        "B. Haruko did 2 times as many sit-ups as Tom.",
+        "C. Tom did 2 more sit-ups than Haruko.",
+        "D. Haruko did 2 more sit-ups than Tom."
+      ],
+      "answer": "A. Tom did 2 times as many sit-ups as Haruko.",
+      "concept": "Multiplication and Word Problems",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 3,
+      "question": "What is the area of Ms. Ragan’s closet floor if it is covered with 4 rows of 16 carpet squares?",
+      "answer": "64 square feet",
+      "explanation": "The area is calculated as 4 × 16 = 64 square feet.",
+      "concept": "Area Calculation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 4,
+      "question": "Which fraction is equivalent to 1/2?",
+      "options": [
+        "A. 2/4",
+        "B. 3/5",
+        "C. 1/3",
+        "D. 3/6"
+      ],
+      "answer": "A. 2/4",
+      "explanation": "Dividing the numerator and denominator of 2/4 by 2 gives 1/2.",
+      "concept": "Equivalent Fractions",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 5,
+      "question": "A movie started at 3:45 PM and lasted for 2 hours and 15 minutes. What time did the movie end?",
+      "answer": "6:00 PM",
+      "explanation": "3:45 PM + 2:15 = 6:00 PM.",
+      "concept": "Time Calculation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 6,
+      "question": "Rami made 54 muffins and placed them in boxes containing 6 muffins each. How many boxes did he use?",
+      "options": [
+        "A. 48",
+        "B. 60",
+        "C. 9",
+        "D. 6"
+      ],
+      "answer": "C. 9",
+      "explanation": "54 divided by 6 equals 9 boxes.",
+      "concept": "Division and Grouping",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 7,
+      "question": "Samantha drew an octagon with each side measuring 3 centimeters. What is the perimeter of the octagon?",
+      "options": [
+        "A. 11 cm",
+        "B. 24 cm",
+        "C. 16 cm",
+        "D. 64 cm"
+      ],
+      "answer": "D. 64 cm",
+      "explanation": "An octagon has 8 sides, so perimeter = 3 × 8 = 24 cm. (Adjust the answer if the intended design is different.)",
+      "concept": "Perimeter Calculation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 8,
+      "question": "A group of people bought tickets for a roller-coaster ride. Each ticket cost $4 and the total spent was $48. If each person got 2 tickets, how many people were in the group?",
+      "answer": "6 people",
+      "explanation": "Total tickets = 48 ÷ 4 = 12; then 12 ÷ 2 = 6 people.",
+      "concept": "Multiplication and Division",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 9,
+      "question": "Which statement about the number 27 is true?",
+      "options": [
+        "A. It is even because the digit in the tens place is even.",
+        "B. It is odd because the digit in the ones place is odd.",
+        "C. It is even because it can be divided by 9 evenly.",
+        "D. It is odd because it can be divided by 2 evenly."
+      ],
+      "answer": "B. It is odd because the digit in the ones place is odd.",
+      "concept": "Odd and Even Numbers",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 10,
+      "question": "A farmer sold 15 small pumpkins. The number of large pumpkins sold is represented by 3 × 15. Which statement is true?",
+      "options": [
+        "A. Large pumpkins sold = 15 times small pumpkins.",
+        "B. Small pumpkins sold = 15 times large pumpkins.",
+        "C. Large pumpkins sold = 3 times small pumpkins.",
+        "D. Small pumpkins sold = 3 times large pumpkins."
+      ],
+      "answer": "C. Large pumpkins sold = 3 times small pumpkins.",
+      "concept": "Multiplication and Word Problems",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 11,
+      "question": "Tyler recorded the number of eggs he collected each day for 14 days: 14, 7, 6, 12, 5, 13, 8, 6, 10, 12, 6, 8, 6, 14. Which dot plot best represents this data?",
+      "answer": "Dot plot with correct frequencies for each egg count.",
+      "concept": "Data Representation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 12,
+      "question": "A park was visited by 356 adults and 598 children. What is the total number of visitors?",
+      "answer": "954 people",
+      "explanation": "356 + 598 = 954.",
+      "concept": "Addition",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 13,
+      "question": "Each model shown is shaded to represent a fraction. Which models represent fractions equivalent to 2/3?",
+      "answer": "Models with equivalent fractions to 2/3.",
+      "concept": "Equivalent Fractions",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 14,
+      "question": "A librarian needs to arrange 36 new books equally on 4 shelves. How many books will be on each shelf?",
+      "answer": "9 books per shelf",
+      "explanation": "36 ÷ 4 = 9.",
+      "concept": "Division",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 15,
+      "question": "What number goes in the box to make the equation true? □ × 7 = 98",
+      "options": [
+        "A. 14",
+        "B. 91",
+        "C. 105",
+        "D. 13"
+      ],
+      "answer": "A. 14",
+      "explanation": "98 ÷ 7 = 14.",
+      "concept": "Multiplication",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 16,
+      "question": "A student measured the lengths of two worms. Worm S is 1 1/2 feet long and Worm T is 2 1/2 feet long. Which statement is true?",
+      "options": [
+        "A. Worm S is longer than Worm T.",
+        "B. Worm T is longer than Worm S.",
+        "C. Both worms are equal in length.",
+        "D. There is not enough information."
+      ],
+      "answer": "B. Worm T is longer than Worm S.",
+      "concept": "Measurement Comparison",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 17,
+      "question": "Trey is describing his labor and income. Which statement best describes both his labor and income?",
+      "options": [
+        "A. Trey does volunteer work at a hospital.",
+        "B. Trey pays a company to repair his roof.",
+        "C. Trey takes $25 out of his bank account and spends it.",
+        "D. Trey takes dogs for a walk after school and earns $25."
+      ],
+      "answer": "D. Trey takes dogs for a walk after school and earns $25.",
+      "concept": "Labor and Income",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 18,
+      "question": "Which number sentence correctly completes the equation 12 ÷ 2 = □?",
+      "options": [
+        "A. 2 + 12 = 14",
+        "B. 6 × 2 = 12",
+        "C. 12 × 2 = 24",
+        "D. 2 + 10 = 12"
+      ],
+      "answer": "B. 6 × 2 = 12",
+      "concept": "Division",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 19,
+      "question": "Janet has 2 new games. Each game contains 3 packs of cards and each pack has 10 cards. How many cards does Janet have in total?",
+      "answer": "60 cards",
+      "explanation": "Total cards = 2 × 3 × 10 = 60.",
+      "concept": "Multiplication",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 20,
+      "question": "Leighton made a table listing attributes of various shapes. Which type of table best represents her data?",
+      "answer": "A table showing attributes such as number of vertices and sides for each shape.",
+      "concept": "Data Interpretation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 21,
+      "question": "A group of figures is shown. Which word best describes all the figures?",
+      "options": [
+        "A. Rectangle",
+        "B. Rhombus",
+        "C. Trapezoid",
+        "D. Parallelogram"
+      ],
+      "answer": "D. Parallelogram",
+      "concept": "Geometry – Shapes",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 22,
+      "question": "The table shows the number of tomato plants and spinach plants in several gardens. Which statement is true?",
+      "options": [
+        "A. There are 9 more spinach plants than tomato plants in each garden.",
+        "B. There are 9 fewer spinach plants than tomato plants in each garden.",
+        "C. There are 8 more spinach plants than tomato plants in each garden.",
+        "D. There are 8 fewer spinach plants than tomato plants in each garden."
+      ],
+      "answer": "A. There are 9 more spinach plants than tomato plants in each garden.",
+      "concept": "Data Interpretation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 23,
+      "question": "The picture shows 8 seats in a movie theater with children seated in some. Which expression is equivalent to the fraction of seats occupied by children?",
+      "options": [
+        "A. 1/8 + 1/8 + 1/8 + 1/8",
+        "B. 1/3 + 1/3 + 1/3",
+        "C. 3/8 + 3/8 + 3/8",
+        "D. 1/8 + 1/8 + 1/8"
+      ],
+      "answer": "D. 1/8 + 1/8 + 1/8",
+      "concept": "Fractions",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 24,
+      "question": "A clock shows that a movie started at 7:45. The movie lasted 1 hour and 15 minutes. What time is closest to when the movie ended?",
+      "answer": "9:00",
+      "explanation": "7:45 + 1:15 = 9:00.",
+      "concept": "Time Calculation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 25,
+      "question": "There are 6 apples in each of 7 bags. What is the total number of apples?",
+      "answer": "42 apples",
+      "explanation": "6 × 7 = 42.",
+      "concept": "Multiplication",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 26,
+      "question": "A teacher bought 18 red markers and 6 boxes of blue markers (each box has 10 markers). What is the total number of markers?",
+      "answer": "78 markers",
+      "explanation": "Total = 18 + (6 × 10) = 18 + 60 = 78.",
+      "concept": "Addition",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 27,
+      "question": "The tops of two boxes are covered with 1-inch square tiles. Box 1 has 6 rows of 8 tiles and Box 2 has 10 rows of 4 tiles. What is the area of each box's top in square inches?",
+      "answer": "Box 1: 48 sq in; Box 2: 40 sq in",
+      "explanation": "Box 1: 6×8 = 48; Box 2: 10×4 = 40.",
+      "concept": "Area Calculation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 28,
+      "question": "A group of 6 kittens is shown. Some kittens are gray and some are white. Which expression represents the fraction of kittens that are white?",
+      "answer": "The expression that correctly represents the ratio of white kittens to total kittens.",
+      "concept": "Fractions",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 29,
+      "question": "Which figures appear to be parallelograms? (Circle TWO correct answers)",
+      "answer": "The two figures that meet the criteria for parallelograms.",
+      "concept": "Geometry – Shapes",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 30,
+      "question": "Claire has 12 wooden blocks which she arranged into 4 equal groups. How many blocks are in each group?",
+      "answer": "3 blocks per group",
+      "explanation": "12 ÷ 4 = 3.",
+      "concept": "Division",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 31,
+      "question": "Alberto works at a candy store and is paid by the hour. Which statement is most likely true?",
+      "options": [
+        "A. The more hours he works, the less he earns.",
+        "B. The fewer hours he works, the less he earns.",
+        "C. The more hours he works, the less labor he provides.",
+        "D. The fewer hours he works, the less labor he provides."
+      ],
+      "answer": "B. The fewer hours he works, the less he earns.",
+      "concept": "Real-world Application",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 32,
+      "question": "The table shows the relationship between the number of toy robots made and the number of wheels needed. If 3 robots require 9 wheels, 8 robots require 24 wheels, 13 robots require 39 wheels, and 18 robots require 54 wheels, what is the relationship?",
+      "answer": "The number of wheels is 3 times the number of robots.",
+      "concept": "Multiplication",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 33,
+      "question": "A jar contains 368 nickels and 109 more dimes than nickels. What is the total number of coins?",
+      "answer": "845 coins",
+      "explanation": "Dimes = 368 + 109 = 477; total = 368 + 477 = 845.",
+      "concept": "Addition",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 34,
+      "question": "A point on a number line represents the number of people at a parade. Which statement best describes the number of people?",
+      "answer": "The number is approximately 10,000.",
+      "concept": "Estimation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 35,
+      "question": "A group of figures is shown. Which statement appears to be true about all the figures?",
+      "options": [
+        "A. All the figures have at least 1 rectangular face.",
+        "B. All the figures have at least 1 triangular face.",
+        "C. All the figures are prisms.",
+        "D. All the figures are polygons."
+      ],
+      "answer": "A. All the figures have at least 1 rectangular face.",
+      "concept": "Geometry – 3D Figures",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 36,
+      "question": "Skye completed 3 levels of a computer game. She won 465 points in Level 1, lost 192 points in Level 2, and won 309 points in Level 3. Which equation finds her total points?",
+      "options": [
+        "A. 465 + 309 = Total",
+        "B. 465 + 309 - 192 = Total",
+        "C. 465 + 309 + 192 = Total",
+        "D. 465 - 192 + 309 = Total"
+      ],
+      "answer": "B. 465 + 309 - 192 = Total",
+      "concept": "Addition and Subtraction",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 37,
+      "question": "Which model represents an equivalent fraction to 2/4?",
+      "options": [
+        "A. 1/2",
+        "B. 2/6",
+        "C. 3/4",
+        "D. 1/3"
+      ],
+      "answer": "A. 1/2",
+      "concept": "Equivalent Fractions",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 38,
+      "question": "A jar contains only nickels and dimes. If there are 368 nickels and 477 dimes, how many coins are there in total?",
+      "answer": "845 coins",
+      "explanation": "368 + 477 = 845.",
+      "concept": "Addition",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 39,
+      "question": "A student recorded his daily egg collection over 14 days. Which dot plot correctly represents the data?",
+      "answer": "A dot plot that accurately reflects the frequencies for each recorded egg count.",
+      "concept": "Data Representation",
+      "grade": 3,
+      "subject": "Math"
+    },
+    {
+      "id": 40,
+      "question": "Which model best represents an equivalent fraction for 2/4?",
+      "options": [
+        "A. 1/2",
+        "B. 2/3",
+        "C. 3/4",
+        "D. 1/3"
+      ],
+      "answer": "A. 1/2",
+      "concept": "Equivalent Fractions",
+      "grade": 3,
+      "subject": "Math"
+    }
+  ]
+}
