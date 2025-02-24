@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx server/index.ts",
-    "build": "NODE_ENV=production vite build && NODE_ENV=production esbuild server/index.ts server/production.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "build": "NODE_ENV=production vite build && NODE_ENV=production esbuild server/index.production.ts server/production.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "NODE_ENV=production node dist/index.production.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
   },
