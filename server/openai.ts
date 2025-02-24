@@ -45,7 +45,7 @@ interface EvaluationResult {
   explanation: string;
 }
 
-async function generateQuestion(grade: number, subject: string): Promise<GeneratedQuestion> {
+async function generateQuestion(grade: number, subject: string, concept?: string): Promise<GeneratedQuestion> {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4",
@@ -56,7 +56,7 @@ async function generateQuestion(grade: number, subject: string): Promise<Generat
         },
         {
           role: "user",
-          content: `Generate a ${subject} question for grade ${grade} that tests a key concept from the curriculum.`
+          content: `Generate a ${subject} question for grade ${grade} focused on ${subject === "Math" && concept ? concept : "a key concept from the curriculum"}. Make sure the question follows STAAR standards and includes multiple choice answers.`
         }
       ],
       temperature: 0.7,
