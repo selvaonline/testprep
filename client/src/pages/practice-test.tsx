@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useParams, Redirect } from "wouter";
+import { useParams, Redirect, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { StoredQuestion } from "@/../../prompts/types";
 import QuestionCard from "@/components/question-card";
@@ -14,6 +14,7 @@ export default function PracticeTest() {
   const { toast } = useToast();
   const { user, isLoading: isAuthLoading } = useAuth();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [, setLocation] = useLocation();
 
   // Parse and validate parameters first
   const gradeNum = grade ? Math.abs(Number(grade)) : null;
@@ -35,9 +36,14 @@ export default function PracticeTest() {
 
   // Auth check
   if (isAuthLoading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin" />
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-background/95 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -47,11 +53,32 @@ export default function PracticeTest() {
   // Early return for invalid parameters
   if (!isValidParams) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-red-500">Invalid parameters:</p>
-          <p>Grade: {grade} {isValidGrade ? '✅' : '❌'}</p>
-          <p>Subject: {subject} {isValidSubject ? '✅' : '❌'}</p>
+      <div className="min-h-screen bg-gradient-to-b from-background to-background/95 flex items-center justify-center">
+        <div className="max-w-md w-full mx-4 p-6 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20 shadow-lg">
+          <div className="text-center space-y-6">
+            <h2 className="text-2xl font-bold text-destructive">Invalid Parameters</h2>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between p-3 rounded bg-background">
+                <span>Grade: {grade}</span>
+                <span className={isValidGrade ? "text-green-500" : "text-destructive"}>
+                  {isValidGrade ? '✓' : '✗'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded bg-background">
+                <span>Subject: {subject}</span>
+                <span className={isValidSubject ? "text-green-500" : "text-destructive"}>
+                  {isValidSubject ? '✓' : '✗'}
+                </span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setLocation('/')}
+              className="w-full hover:bg-primary/10 transition-colors"
+            >
+              Return to Home
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -112,17 +139,42 @@ export default function PracticeTest() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen bg-gradient-to-b from-background to-background/95 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground animate-pulse">Loading Questions...</p>
+        </div>
       </div>
     );
   }
 
-  // Add error display
   if (questionsError) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">Error loading questions: {(questionsError as Error).message}</p>
+      <div className="min-h-screen bg-gradient-to-b from-background to-background/95 flex items-center justify-center">
+        <div className="max-w-md w-full mx-4 p-6 bg-white/50 backdrop-blur-sm rounded-lg border border-destructive/20 shadow-lg">
+          <div className="text-center space-y-6">
+            <h2 className="text-2xl font-bold text-destructive">Error Loading Questions</h2>
+            <p className="text-sm text-muted-foreground">
+              {(questionsError as Error).message}
+            </p>
+            <div className="space-x-4">
+              <Button 
+                variant="outline" 
+                onClick={() => queryClient.invalidateQueries({ queryKey: [`questions-${gradeNum}-${decodedSubject}`] })}
+                className="hover:bg-primary/10 transition-colors"
+              >
+                Try Again
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setLocation('/')}
+                className="hover:bg-primary/10 transition-colors"
+              >
+                Return to Home
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -130,16 +182,38 @@ export default function PracticeTest() {
   const currentQuestion = questions?.[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-2xl font-bold">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/95">
+      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+            TestPrep
+          </h1>
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium">Welcome, {user?.username}</span>
+            <Button 
+              variant="outline" 
+              onClick={() => setLocation('/')}
+              className="hover:bg-primary/10 transition-colors"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <header className="space-y-4">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
               Grade {gradeNum} {decodedSubject} Practice Test
-            </h1>
-            <p className="text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {(questions || []).length}
-            </p>
+            </h2>
+            <div className="flex items-center gap-4">
+              <div className="h-[2px] flex-grow bg-gradient-to-r from-primary/20 to-transparent" />
+              <p className="text-sm font-medium text-muted-foreground">
+                Question {currentQuestionIndex + 1} of {(questions || []).length}
+              </p>
+              <div className="h-[2px] flex-grow bg-gradient-to-l from-primary/20 to-transparent" />
+            </div>
           </header>
 
           {currentQuestion ? (
@@ -149,16 +223,26 @@ export default function PracticeTest() {
               }
             }} />
           ) : (
-            <div className="text-center space-y-4">
-              <p>No questions available. Generate some questions to start practicing.</p>
+            <div className="text-center space-y-6 py-12">
+              <div className="space-y-3">
+                <p className="text-lg font-medium">No questions available yet</p>
+                <p className="text-sm text-muted-foreground">
+                  Generate some questions to start practicing {decodedSubject} for Grade {gradeNum}
+                </p>
+              </div>
               <Button
                 onClick={() => generateQuestionMutation.mutate()}
                 disabled={generateQuestionMutation.isPending}
+                className="bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity px-8"
               >
-                {generateQuestionMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {generateQuestionMutation.isPending ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Generating...</span>
+                  </div>
+                ) : (
+                  "Generate Questions"
                 )}
-                Generate Questions
               </Button>
             </div>
           )}

@@ -15,24 +15,32 @@ export default function HomePage() {
   const subjects = ["Math", "Reading", "Science", "Social Studies"];
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/95">
+      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">TestPrep</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+            TestPrep
+          </h1>
           <div className="flex items-center gap-4">
-            <span>Welcome, {user?.username}</span>
-            <Button variant="outline" onClick={() => logoutMutation.mutate()}>
+            <span className="text-sm font-medium">Welcome, {user?.username}</span>
+            <Button 
+              variant="outline" 
+              onClick={() => logoutMutation.mutate()}
+              className="hover:bg-destructive hover:text-destructive-foreground transition-colors"
+            >
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-[2fr,1fr] gap-8">
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Practice Tests</h2>
-            <div className="space-y-4">
+      <main className="container mx-auto px-4 py-12">
+        <div className="grid md:grid-cols-[2fr,1fr] gap-12">
+          <div className="space-y-8">
+            <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+              Practice Tests
+            </h2>
+            <div className="space-y-6">
               {subjects.map((subject) => {
                 if (!user) return null;
                 const defaultGrade = 3;

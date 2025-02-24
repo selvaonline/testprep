@@ -52,12 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: async (credentials: LoginData) => {
       console.log('Login attempt:', { username: credentials.username });
       const res = await apiRequest("POST", "/api/login", credentials) as Response;
-      const data = await res.json() as SelectUser & { token: string };
+      const data = await res.json();
       console.log('Login response:', data);
       if (!res.ok) {
-        throw new Error(`Login failed: ${res.status} ${res.statusText}`);
+        throw new Error(data.error || `Login failed: ${res.status} ${res.statusText}`);
       }
-      return data;
+      return data as SelectUser & { token: string };
     },
     onSuccess: (response) => {
       console.log('Login success:', response);
@@ -78,12 +78,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: async (credentials: InsertUser) => {
       console.log('Register attempt:', { username: credentials.username });
       const res = await apiRequest("POST", "/api/register", credentials) as Response;
-      const data = await res.json() as SelectUser & { token: string };
+      const data = await res.json();
       console.log('Register response:', data);
       if (!res.ok) {
-        throw new Error(`Registration failed: ${res.status} ${res.statusText}`);
+        // Extract error message from response
+        throw new Error(data.error || `Registration failed: ${res.status} ${res.statusText}`);
       }
-      return data;
+      return data as SelectUser & { token: string };
     },
     onSuccess: (response) => {
       console.log('Register success:', response);

@@ -31,43 +31,73 @@ export default function QuestionCard({ question, onNext }: QuestionCardProps) {
   });
 
   return (
-    <Card>
-      <CardContent className="pt-6 space-y-6">
-        <div className="text-lg font-medium">{question.question}</div>
+    <Card className="border-primary/20">
+      <CardContent className="pt-8 space-y-8">
+        <div className="space-y-4">
+          <div className="text-xl font-medium leading-relaxed">{question.question}</div>
+          <div className="h-[2px] w-16 bg-gradient-to-r from-primary to-primary-foreground" />
+        </div>
 
         <div className="space-y-4">
           {question.options.map((option, index) => (
             <Button
               key={index}
               variant={answer === option ? "default" : "outline"}
-              className="w-full justify-start"
+              className={`w-full justify-start p-4 h-auto text-left transition-all duration-200 ${
+                answer === option 
+                  ? "bg-gradient-to-r from-primary to-primary-foreground text-primary-foreground" 
+                  : "hover:border-primary/50"
+              }`}
               onClick={() => !showExplanation && setAnswer(option)}
               disabled={showExplanation}
             >
-              {option}
+              <div className="flex items-start gap-3">
+                <span className="font-mono text-sm px-2 py-1 bg-black/10 rounded">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                <span>{option}</span>
+              </div>
             </Button>
           ))}
         </div>
 
         {!showExplanation ? (
           <Button
-            className="w-full"
+            className={`w-full h-12 transition-all duration-200 ${
+              answer 
+                ? "bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90" 
+                : "opacity-50"
+            }`}
             onClick={() => evaluateMutation.mutate()}
             disabled={evaluateMutation.isPending || !answer}
           >
-            {evaluateMutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {evaluateMutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Evaluating...</span>
+              </div>
+            ) : (
+              "Submit Answer"
             )}
-            Submit Answer
           </Button>
         ) : (
-          <div className="space-y-4">
-            <Alert variant={evaluateMutation.data?.isCorrect ? "default" : "destructive"}>
-              <AlertDescription>
+          <div className="space-y-6">
+            <Alert 
+              variant={evaluateMutation.data?.isCorrect ? "default" : "destructive"}
+              className={`border-2 ${
+                evaluateMutation.data?.isCorrect 
+                  ? "border-green-500/50 bg-green-500/10" 
+                  : "border-destructive/50 bg-destructive/10"
+              }`}
+            >
+              <AlertDescription className="text-base leading-relaxed">
                 {evaluateMutation.data?.explanation}
               </AlertDescription>
             </Alert>
-            <Button className="w-full" onClick={onNext}>
+            <Button 
+              className="w-full h-12 bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity"
+              onClick={onNext}
+            >
               Next Question
             </Button>
           </div>
