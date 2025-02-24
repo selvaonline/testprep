@@ -1,30 +1,33 @@
-import { User, Question, Attempt, InsertUser } from "@shared/schema";
-import { IStorage } from "./storage";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import type { GeneratedQuestion } from "./openai";
 
 const MemoryStore = createMemoryStore(session);
 
-export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  
-  getQuestions(grade: number, subject: string): Promise<Question[]>;
-  addQuestion(question: Question): Promise<Question>;
-  
-  getAttempts(userId: number): Promise<Attempt[]>;
-  addAttempt(attempt: Attempt): Promise<Attempt>;
-  
-  sessionStore: session.Store;
+interface User {
+  id: number;
+  username: string;
+  password: string;
 }
 
-export class MemStorage implements IStorage {
+interface StoredQuestion extends GeneratedQuestion {
+  id: number;
+}
+
+interface Attempt {
+  id: number;
+  userId: number;
+  questionId: number;
+  isCorrect: boolean;
+  createdAt: Date;
+}
+
+class MemStorage {
   private users: Map<number, User>;
-  private questions: Map<number, Question>;
+  private questions: Map<number, StoredQuestion>;
   private attempts: Map<number, Attempt>;
   private currentId: number;
-  sessionStore: session.Store;
+  readonly sessionStore: ReturnType<typeof createMemoryStore>;
 
   constructor() {
     this.users = new Map();
@@ -32,7 +35,7 @@ export class MemStorage implements IStorage {
     this.attempts = new Map();
     this.currentId = 1;
     this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000,
+      checkPeriod: 86400000, // prune expired entries every 24h
     });
   }
 
@@ -42,24 +45,24 @@ export class MemStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
-      (user) => user.username === username,
+      (user) => user.username === username
     );
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(insertUser: Omit<User, "id">): Promise<User> {
     const id = this.currentId++;
     const user = { ...insertUser, id };
     this.users.set(id, user);
     return user;
   }
 
-  async getQuestions(grade: number, subject: string): Promise<Question[]> {
+  async getQuestions(grade: number, subject: string): Promise<StoredQuestion[]> {
     return Array.from(this.questions.values()).filter(
       (q) => q.grade === grade && q.subject === subject
     );
   }
 
-  async addQuestion(question: Question): Promise<Question> {
+  async addQuestion(question: GeneratedQuestion): Promise<StoredQuestion> {
     const id = this.currentId++;
     const newQuestion = { ...question, id };
     this.questions.set(id, newQuestion);
@@ -72,7 +75,7 @@ export class MemStorage implements IStorage {
     );
   }
 
-  async addAttempt(attempt: Attempt): Promise<Attempt> {
+  async addAttempt(attempt: Omit<Attempt, "id">): Promise<Attempt> {
     const id = this.currentId++;
     const newAttempt = { ...attempt, id };
     this.attempts.set(id, newAttempt);
