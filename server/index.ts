@@ -53,9 +53,8 @@ app.use((req, res, next) => {
   // doesn't interfere with the other routes
   // In development, override the static serving with Vite's dev server
   if (process.env.NODE_ENV === "development") {
-    const viteModule = await import("./vite");
-    const { setupVite } = viteModule;
-    await setupVite(app, server);
+    const viteModule = await import("./vite.dev");
+    await viteModule.setupVite(app, server);
   } else {
     serveStatic(app);
   }
