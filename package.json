@@ -2,6 +2,9 @@
   "name": "rest-express",
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "tsx server/index.ts",
@@ -108,6 +111,7 @@
     "vite": "^5.4.14"
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.8"
+    "bufferutil": "^4.0.8",
+    "@rollup/rollup-linux-x64-gnu": "4.6.1"
   }
 }
