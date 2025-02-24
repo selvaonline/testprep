@@ -32,7 +32,8 @@ export default function AuthPage() {
     return <Redirect to="/" />;
   }
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = async (data: any) => {
+    console.log('Submitting form with data:', data);
     if (isLogin) {
       loginMutation.mutate(data);
     } else {
@@ -74,7 +75,7 @@ export default function AuthPage() {
               <div>
                 <div className="relative">
                   <Input 
-                    {...form.register("username")} 
+                    {...form.register("username", { required: true })} 
                     className="h-14 px-12 rounded-2xl bg-[#f9f9f9] border-0 text-[#333] text-lg placeholder:text-[#aaa]"
                     placeholder="Your Email"
                     autoComplete="username"
@@ -97,7 +98,7 @@ export default function AuthPage() {
                 <div className="relative">
                   <Input 
                     type={showPassword ? "text" : "password"}
-                    {...form.register("password")} 
+                    {...form.register("password", { required: true })} 
                     className="h-14 px-12 rounded-2xl bg-[#f9f9f9] border-0 text-lg placeholder:text-[#aaa]"
                     placeholder="Your Password"
                     autoComplete={isLogin ? "current-password" : "new-password"}
