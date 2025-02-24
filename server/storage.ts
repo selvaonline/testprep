@@ -1,17 +1,9 @@
-import session from "express-session";
-import createMemoryStore from "memorystore";
-import type { GeneratedQuestion } from "./openai";
-
-const MemoryStore = createMemoryStore(session);
+import type { StoredQuestion, GeneratedQuestion } from "../prompts/types";
 
 interface User {
   id: number;
   username: string;
   password: string;
-}
-
-interface StoredQuestion extends GeneratedQuestion {
-  id: number;
 }
 
 interface Attempt {
@@ -22,49 +14,68 @@ interface Attempt {
   createdAt: Date;
 }
 
-class MemStorage {
+export class MemStorage {
   private users: Map<number, User>;
   private questions: Map<number, StoredQuestion>;
   private attempts: Map<number, Attempt>;
   private currentId: number;
-  readonly sessionStore: ReturnType<typeof createMemoryStore>;
-
   constructor() {
     this.users = new Map();
     this.questions = new Map();
     this.attempts = new Map();
     this.currentId = 1;
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // prune expired entries every 24h
-    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const user = this.users.get(id);
+    if (user) {
+      console.log('Storage: Getting user by id:', { id, user });
+      return user;
+    }
+    return undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
+    const user = Array.from(this.users.values()).find(
       (user) => user.username === username
     );
+    if (user) {
+      console.log('Storage: Getting user by username:', { username, user });
+      return user;
+    }
+    return undefined;
   }
 
   async createUser(insertUser: Omit<User, "id">): Promise<User> {
     const id = this.currentId++;
-    const user = { ...insertUser, id };
+    const user = {
+      id,
+      username: insertUser.username,
+      password: insertUser.password,
+    };
+    console.log('Storage: Creating user:', { user });
     this.users.set(id, user);
     return user;
   }
 
   async getQuestions(grade: number, subject: string): Promise<StoredQuestion[]> {
+    const parsedGrade = Number(grade);
+    console.log('Storage: Getting questions for:', { grade: parsedGrade, type: typeof parsedGrade, subject });
     return Array.from(this.questions.values()).filter(
-      (q) => q.grade === grade && q.subject === subject
+      (q) => q.grade === parsedGrade && q.subject.toLowerCase() === subject.toLowerCase()
     );
   }
 
   async addQuestion(question: GeneratedQuestion): Promise<StoredQuestion> {
+    const parsedGrade = Number(question.grade);
+    console.log('Storage: Adding question:', { grade: parsedGrade, type: typeof parsedGrade });
     const id = this.currentId++;
-    const newQuestion = { ...question, id };
+    const newQuestion: StoredQuestion = { 
+      ...question,
+      id,
+      grade: parsedGrade,
+      subject: question.subject.toLowerCase()
+    };
     this.questions.set(id, newQuestion);
     return newQuestion;
   }

@@ -24,7 +24,12 @@ export default function TestCategory({ grade, subject }: TestCategoryProps) {
                 Practice {subject} questions aligned with Texas board and STAR exam standards for Grade {grade}.
               </p>
               <Button
-                onClick={() => setLocation(`/practice/${grade}/${subject}`)}
+                onClick={() => {
+                  // Make sure grade is a number and subject is properly formatted
+                  const path = `/practice/${Number(grade)}/${encodeURIComponent(subject)}`;
+                  console.log('Navigating to practice test:', { path, grade: Number(grade), subject });
+                  setLocation(path);
+                }}
                 className="w-full"
               >
                 Start Practice Test

@@ -1,17 +1,9 @@
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
-import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import jwt from "jsonwebtoken";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-
-declare global {
-  namespace Express {
-    interface User extends SelectUser {}
-  }
-}
 
 const scryptAsync = promisify(scrypt);
 
@@ -28,66 +20,100 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+function generateToken(user: { id: number; username: string }) {
+  return jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.JWT_SECRET!,
+    { expiresIn: '24h' }
+  );
+}
+
+import { Request, Response, NextFunction } from "express";
+import { AuthenticatedRequest } from "./types";
+
+export const verifyToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.sendStatus(401);
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: number };
+    const user = await storage.getUser(decoded.id);
+    if (!user) {
+      return res.sendStatus(401);
+    }
+    (req as AuthenticatedRequest).user = user;
+    next();
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+};
+
 export function setupAuth(app: Express) {
-  const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
-    resave: false,
-    saveUninitialized: false,
-    store: storage.sessionStore,
-  };
+  app.post("/api/register", async (req, res) => {
+    try {
+      const existingUser = await storage.getUserByUsername(req.body.username);
+      if (existingUser) {
+        return res.status(400).send("Username already exists");
+      }
 
-  app.set("trust proxy", 1);
-  app.use(session(sessionSettings));
-  app.use(passport.initialize());
-  app.use(passport.session());
+      const user = await storage.createUser({
+        ...req.body,
+        password: await hashPassword(req.body.password),
+      });
 
-  passport.use(
-    new LocalStrategy(async (username, password, done) => {
+      const token = generateToken(user);
+      res.status(201).json({
+        id: user.id,
+        username: user.username,
+        token
+      });
+    } catch (err) {
+      console.error('Registration error:', err);
+      res.status(500).send("Registration failed");
+    }
+  });
+
+  app.post("/api/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      console.log('Login attempt:', { username });
+
       const user = await storage.getUserByUsername(username);
       if (!user || !(await comparePasswords(password, user.password))) {
-        return done(null, false);
-      } else {
-        return done(null, user);
+        console.log('Login failed: Invalid credentials');
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-    }),
-  );
 
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser(async (id: number, done) => {
-    const user = await storage.getUser(id);
-    done(null, user);
-  });
-
-  app.post("/api/register", async (req, res, next) => {
-    const existingUser = await storage.getUserByUsername(req.body.username);
-    if (existingUser) {
-      return res.status(400).send("Username already exists");
+      const token = generateToken(user);
+      console.log('Login successful:', { user: { id: user.id, username: user.username } });
+      res.json({
+        id: user.id,
+        username: user.username,
+        token
+      });
+    } catch (err) {
+      console.error('Login error:', err);
+      res.status(500).send("Login failed");
     }
-
-    const user = await storage.createUser({
-      ...req.body,
-      password: await hashPassword(req.body.password),
-    });
-
-    req.login(user, (err) => {
-      if (err) return next(err);
-      res.status(201).json(user);
-    });
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/logout", (_req, res) => {
+    res.sendStatus(200);
   });
 
-  app.post("/api/logout", (req, res, next) => {
-    req.logout((err) => {
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
-  });
-
-  app.get("/api/user", (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    res.json(req.user);
+  app.get("/api/user", verifyToken, (req: Request, res: Response) => {
+    const userData = {
+      id: (req as AuthenticatedRequest).user.id,
+      username: (req as AuthenticatedRequest).user.username
+    };
+    console.log('Sending user data:', userData);
+    res.json(userData);
   });
 }

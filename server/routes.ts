@@ -1,37 +1,67 @@
 import { createServer } from "http";
-import express from "express";
-import { setupAuth } from "./auth";
+import express, { Request, Response } from "express";
+import { setupAuth, verifyToken } from "./auth";
 import { generateQuestion, evaluateAnswer, type GeneratedQuestion } from "./openai";
 import { storage } from "./storage";
-
-declare module "express-session" {
-  interface SessionData {
-    passport: { user: number };
-  }
-}
-
-declare global {
-  namespace Express {
-    interface User {
-      id: number;
-      username: string;
-    }
-  }
-}
+import { AuthenticatedRequest } from "./types";
 
 export async function registerRoutes(app: express.Express) {
   setupAuth(app);
 
-  app.get("/api/questions/:grade/:subject", async (req, res) => {
+  app.get("/api/questions/:grade/:subject", verifyToken, async (req: Request, res: Response) => {
     const { grade, subject } = req.params;
-    const questions = await storage.getQuestions(parseInt(grade), subject);
+    console.log('GET questions params:', { grade, subject, types: { grade: typeof grade, subject: typeof subject } });
+    
+    const parsedGrade = parseInt(grade);
+    const decodedSubject = decodeURIComponent(subject);
+    
+    if (isNaN(parsedGrade) || parsedGrade <= 0) {
+      return res.status(400).json({
+        message: "Invalid grade parameter",
+        error: `Grade must be a positive number, received: ${grade}`
+      });
+    }
+
+    if (!decodedSubject || typeof decodedSubject !== 'string' || !decodedSubject.trim()) {
+      return res.status(400).json({
+        message: "Invalid subject parameter",
+        error: `Subject must be a non-empty string, received: ${subject}`
+      });
+    }
+
+    console.log('GET questions:', { parsedGrade, decodedSubject });
+    const questions = await storage.getQuestions(parsedGrade, decodedSubject);
     res.json(questions);
   });
 
-  app.post("/api/questions/generate", async (req, res) => {
+  app.post("/api/questions/generate", verifyToken, async (req: Request, res: Response) => {
+    console.log('Generate request body (raw):', req.body);
+    
     const { grade, subject, concept } = req.body;
+    
+    // Validate parameters
+    const parsedGrade = Number(grade);
+    if (isNaN(parsedGrade) || parsedGrade <= 0) {
+      console.log('Invalid grade:', { grade, parsedGrade, type: typeof grade });
+      return res.status(400).json({
+        message: "Invalid grade parameter",
+        error: `Grade must be a positive number, received: ${grade} (${typeof grade})`
+      });
+    }
+
+    if (!subject || typeof subject !== 'string' || !subject.trim()) {
+      console.log('Invalid subject:', { subject, type: typeof subject });
+      return res.status(400).json({
+        message: "Invalid subject parameter",
+        error: `Subject must be a non-empty string, received: ${subject} (${typeof subject})`
+      });
+    }
+
+    console.log('Generate request (parsed):', { parsedGrade, subject, concept });
+    
     try {
-      const question = await generateQuestion(grade, subject, concept);
+      console.log('Generating question with:', { parsedGrade, subject, concept });
+      const question = await generateQuestion(parsedGrade, subject, concept);
       const savedQuestion = await storage.addQuestion(question);
       res.json(savedQuestion);
     } catch (error: any) {
@@ -42,8 +72,7 @@ export async function registerRoutes(app: express.Express) {
     }
   });
 
-  app.post("/api/questions/:id/evaluate", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
+  app.post("/api/questions/:id/evaluate", verifyToken, async (req: Request, res: Response) => {
 
     const { id } = req.params;
     const { answer } = req.body;
@@ -59,7 +88,7 @@ export async function registerRoutes(app: express.Express) {
       const evaluation = await evaluateAnswer(question, answer);
 
       const attempt = await storage.addAttempt({
-        userId: req.user!.id,
+        userId: (req as AuthenticatedRequest).user.id,
         questionId: question.id,
         isCorrect: evaluation.isCorrect,
         createdAt: new Date(),
@@ -74,10 +103,8 @@ export async function registerRoutes(app: express.Express) {
     }
   });
 
-  app.get("/api/attempts", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const attempts = await storage.getAttempts(req.user!.id);
+  app.get("/api/attempts", verifyToken, async (req: Request, res: Response) => {
+    const attempts = await storage.getAttempts((req as AuthenticatedRequest).user.id);
     res.json(attempts);
   });
 

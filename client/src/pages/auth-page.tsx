@@ -8,8 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema, InsertUser } from "@shared/schema";
 import { Redirect } from "wouter";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   
@@ -25,7 +23,6 @@ export default function AuthPage() {
     defaultValues: {
       username: "",
       password: "",
-      grade: 3,
     },
   });
 
@@ -45,7 +42,10 @@ export default function AuthPage() {
               </TabsList>
 
               <TabsContent value="login">
-                <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
+                <form onSubmit={loginForm.handleSubmit((data) => {
+                  console.log('Login form submit:', data);
+                  loginMutation.mutate(data);
+                })}>
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="username">Username</Label>
@@ -63,7 +63,10 @@ export default function AuthPage() {
               </TabsContent>
 
               <TabsContent value="register">
-                <form onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data as InsertUser))}>
+                <form onSubmit={registerForm.handleSubmit((data) => {
+                  console.log('Form data:', data);
+                  registerMutation.mutate(data as InsertUser);
+                })}>
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="username">Username</Label>
@@ -72,21 +75,6 @@ export default function AuthPage() {
                     <div>
                       <Label htmlFor="password">Password</Label>
                       <Input type="password" {...registerForm.register("password")} />
-                    </div>
-                    <div>
-                      <Label htmlFor="grade">Grade</Label>
-                      <Select onValueChange={(value) => registerForm.setValue("grade", parseInt(value))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select grade" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[3,4,5,6,7,8].map((grade) => (
-                            <SelectItem key={grade} value={grade.toString()}>
-                              Grade {grade}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </div>
                     <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
                       Register

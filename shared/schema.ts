@@ -6,7 +6,6 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  grade: integer("grade").notNull(),
 });
 
 export const questions = pgTable("questions", {
@@ -26,11 +25,11 @@ export const attempts = pgTable("attempts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  grade: true,
-});
+export const insertUserSchema = createInsertSchema(users)
+  .pick({
+    username: true,
+    password: true,
+  });
 
 export const insertQuestionSchema = createInsertSchema(questions);
 export const insertAttemptSchema = createInsertSchema(attempts);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Question } from "@shared/schema";
+import { StoredQuestion } from "@/../../prompts/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface QuestionCardProps {
-  question: Question;
+  question: StoredQuestion;
   onNext: () => void;
 }
 
@@ -35,14 +35,18 @@ export default function QuestionCard({ question, onNext }: QuestionCardProps) {
       <CardContent className="pt-6 space-y-6">
         <div className="text-lg font-medium">{question.question}</div>
 
-        <div>
-          <Textarea
-            placeholder="Type your answer here..."
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            disabled={showExplanation}
-            className="h-32"
-          />
+        <div className="space-y-4">
+          {question.options.map((option, index) => (
+            <Button
+              key={index}
+              variant={answer === option ? "default" : "outline"}
+              className="w-full justify-start"
+              onClick={() => !showExplanation && setAnswer(option)}
+              disabled={showExplanation}
+            >
+              {option}
+            </Button>
+          ))}
         </div>
 
         {!showExplanation ? (

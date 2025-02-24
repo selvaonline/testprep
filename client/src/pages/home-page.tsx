@@ -33,13 +33,17 @@ export default function HomePage() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Practice Tests</h2>
             <div className="space-y-4">
-              {subjects.map((subject) => (
-                <TestCategory
-                  key={subject}
-                  grade={user!.grade}
-                  subject={subject}
-                />
-              ))}
+              {subjects.map((subject) => {
+                if (!user) return null;
+                const defaultGrade = 3;
+                return (
+                  <TestCategory
+                    key={subject}
+                    grade={defaultGrade}
+                    subject={subject}
+                  />
+                );
+              })}
             </div>
           </div>
 
