@@ -97,20 +97,12 @@ export default function QuestionCard({ question, onNext, onAnswer }: QuestionCar
                 {evaluateMutation.data?.explanation}
               </AlertDescription>
             </Alert>
-            <div className="flex gap-4">
-              <Button 
-                className="flex-1 h-12 bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity"
-                onClick={onNext}
-              >
-                Next Question
-              </Button>
-              <Button
-                className="flex-1 h-12 bg-[#E67E23] hover:opacity-90 text-white"
-                onClick={onNext}
-              >
-                Generate New Question
-              </Button>
-            </div>
+            <Button 
+              className="w-full h-12 bg-[#E67E23] hover:opacity-90 text-white"
+              onClick={onNext}
+            >
+              Next Question
+            </Button>
           </div>
         )}
       </CardContent>
