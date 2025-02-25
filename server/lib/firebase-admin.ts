@@ -6,13 +6,21 @@ import { dirname } from 'path';
 
 const getServiceAccount = () => {
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    const rawJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    let fixedJson = '';
     try {
-      const rawJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-      // Add missing commas between properties
-      const fixedJson = rawJson.replace(/"\s+"(?=[a-z])/g, '", "');
+      // Remove escaped quotes and add commas
+      fixedJson = rawJson
+        .replace(/\\"/g, '"') // Remove escaped quotes
+        .replace(/"{/g, '{') // Remove leading quote
+        .replace(/}"/g, '}') // Remove trailing quote
+        .replace(/"([^"]+)":/g, '"$1":') // Fix property names
+        .replace(/}({|")/g, '},$1'); // Add commas between objects/properties
       return JSON.parse(fixedJson);
     } catch (error) {
       console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', error);
+      console.error('Raw JSON:', process.env.FIREBASE_SERVICE_ACCOUNT);
+      console.error('Fixed JSON:', fixedJson);
       throw error;
     }
   }
