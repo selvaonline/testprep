@@ -4,27 +4,32 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-let serviceAccount;
-
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  // Parse service account from environment variable
-  try {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  } catch (error) {
-    console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', error);
-    throw error;
+const getServiceAccount = () => {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      const rawJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+      // Add missing commas between properties
+      const fixedJson = rawJson.replace(/"\s+"(?=[a-z])/g, '", "');
+      return JSON.parse(fixedJson);
+    } catch (error) {
+      console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', error);
+      throw error;
+    }
   }
-} else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
-  // Read from file if path is provided (for local development)
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
-  const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
-  serviceAccount = JSON.parse(
-    readFileSync(join(__dirname, '..', '..', serviceAccountPath), 'utf-8')
-  );
-} else {
+
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+    return JSON.parse(
+      readFileSync(join(__dirname, '..', '..', serviceAccountPath), 'utf-8')
+    );
+  }
+
   throw new Error('Neither FIREBASE_SERVICE_ACCOUNT nor FIREBASE_SERVICE_ACCOUNT_PATH is set');
-}
+};
+
+const serviceAccount = getServiceAccount();
 
 const app = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
