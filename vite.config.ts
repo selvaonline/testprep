@@ -18,8 +18,15 @@ export default defineConfig({
   },
   root: path.resolve(__dirname, "client"),
   server: {
-    port: 5050,
+    port: 5173,
     strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5050',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   build: {
     outDir: path.resolve(__dirname, "dist/public"),

@@ -19,14 +19,14 @@ export default function TestCategory({ grade, subject }: TestCategoryProps) {
       <div className="space-y-1">
         <button
           onClick={handleClick}
-          className="text-blue-600 hover:underline text-lg font-medium"
+          className="text-[#E67E23] hover:underline text-lg font-medium"
         >
           {subject}
         </button>
       </div>
       <button
         onClick={handleClick}
-        className="text-blue-600 hover:text-blue-800"
+        className="text-[#E67E23] hover:text-[#d17320]"
       >
         ▶
       </button>

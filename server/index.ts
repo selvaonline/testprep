@@ -14,7 +14,8 @@ async function startServer() {
   try {
     // Middleware
     app.use(cors({
-      credentials: false
+      origin: process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://testprepai-c4d71c7177be.herokuapp.com",
+      credentials: true
     }));
     app.use(express.json());
 

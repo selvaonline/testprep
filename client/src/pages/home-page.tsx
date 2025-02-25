@@ -21,7 +21,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-blue-600">
+          <h1 className="text-3xl font-bold text-[#E67E23]">
             TestPrep
           </h1>
           <div className="flex items-center gap-4">
@@ -46,7 +46,7 @@ export default function HomePage() {
                   onClick={() => setExpandedGrade(grade)}
                   className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50"
                 >
-                  <span className="text-lg font-semibold text-blue-600">
+                  <span className="text-lg font-semibold text-[#E67E23]">
                     Grade {grade}
                   </span>
                   <span className={`transform transition-transform ${expandedGrade === grade ? 'rotate-180' : ''}`}>

@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 
 // Ensure API URL ends with /api
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5050/api' : '/api';
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5050' : '';
 
 export async function apiRequest(
   method: string,
@@ -18,16 +18,14 @@ export async function apiRequest(
   }
 
   try {
-    // Remove /api prefix if it exists in the endpoint since it's already in the base URL
-    const cleanEndpoint = endpoint.startsWith('/api') ? endpoint.slice(4) : endpoint;
-    const url = `${API_BASE_URL}${cleanEndpoint}`;
+    const url = `${API_BASE_URL}${endpoint}`;
     console.log(`Making ${method} request to:`, url, { headers });
     
     const res = await fetch(url, {
       method,
       headers,
       body: data ? JSON.stringify(data) : undefined,
-      credentials: 'include'
+      credentials: 'same-origin'
     });
 
     // Log response details for debugging
