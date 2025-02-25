@@ -50,23 +50,29 @@ interface EvaluationResult {
 
 async function evaluateAnswer(question: GeneratedQuestion, userAnswer: string): Promise<EvaluationResult> {
   try {
+    // First check if the answer matches exactly
+    const isCorrect = userAnswer === question.answer;
+    
+    // Get detailed explanation from GPT-4
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         {
           role: "system",
-          content: `Evaluate if the user's answer matches the correct answer. 
-          Respond with JSON in this format:
+          content: `You are evaluating a student's answer to a multiple choice question.
+          The student selected "${userAnswer}" and the correct answer is "${question.answer}".
+          
+          Provide a detailed, encouraging explanation in this format:
           {
-            "isCorrect": boolean,
-            "explanation": "Explanation of why the answer is correct or incorrect"
+            "isCorrect": ${isCorrect},
+            "explanation": "Start with whether they are correct or incorrect, then explain why. If incorrect, explain the correct answer. Be encouraging and supportive."
           }`
         },
         {
           role: "user",
           content: `Question: ${question.question}
-Correct Answer: ${question.answer}
-User Answer: ${userAnswer}`
+Options: ${question.options.join(', ')}
+Concept being tested: ${question.concept}`
         }
       ],
       temperature: 0.7,

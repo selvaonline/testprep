@@ -14,6 +14,8 @@ export default function PracticeTest() {
   const { toast } = useToast();
   const { user, isLoading: isAuthLoading } = useAuth();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<{[key: string]: string}>({});
+  const [showResults, setShowResults] = useState(false);
   const [, setLocation] = useLocation();
 
   // Parse and validate parameters first
@@ -216,12 +218,61 @@ export default function PracticeTest() {
             </div>
           </header>
 
-          {currentQuestion ? (
-            <QuestionCard question={currentQuestion} onNext={() => {
-              if (questions && currentQuestionIndex < questions.length - 1) {
-                setCurrentQuestionIndex(i => i + 1);
-              }
-            }} />
+          {showResults ? (
+            <div className="text-center space-y-6 py-12">
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold">Practice Session Results</h3>
+                <p className="text-lg">
+                  You answered {Object.values(answers).filter(a => a === 'correct').length} out of {Object.keys(answers).length} questions correctly
+                </p>
+              </div>
+              <div className="space-x-4">
+                <Button
+                  onClick={() => {
+                    setAnswers({});
+                    setShowResults(false);
+                    setCurrentQuestionIndex(0);
+                    generateQuestionMutation.mutate();
+                  }}
+                  className="bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity"
+                >
+                  Start New Session
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setLocation('/')}
+                >
+                  Return Home
+                </Button>
+              </div>
+            </div>
+          ) : currentQuestion ? (
+            <div className="space-y-6">
+              <QuestionCard 
+                question={currentQuestion} 
+                onAnswer={(isCorrect) => {
+                  setAnswers(prev => ({
+                    ...prev,
+                    [currentQuestion.id]: isCorrect ? 'correct' : 'incorrect'
+                  }));
+                }}
+                onNext={() => {
+                  if (questions && currentQuestionIndex < questions.length - 1) {
+                    setCurrentQuestionIndex(i => i + 1);
+                  } else {
+                    generateQuestionMutation.mutate();
+                  }
+                }} 
+              />
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowResults(true)}
+                >
+                  Stop Practice
+                </Button>
+              </div>
+            </div>
           ) : (
             <div className="text-center space-y-6 py-12">
               <div className="space-y-3">

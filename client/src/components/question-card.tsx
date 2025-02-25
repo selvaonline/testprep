@@ -11,9 +11,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 interface QuestionCardProps {
   question: StoredQuestion;
   onNext: () => void;
+  onAnswer: (isCorrect: boolean) => void;
 }
 
-export default function QuestionCard({ question, onNext }: QuestionCardProps) {
+export default function QuestionCard({ question, onNext, onAnswer }: QuestionCardProps) {
   const [answer, setAnswer] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
@@ -24,8 +25,9 @@ export default function QuestionCard({ question, onNext }: QuestionCardProps) {
       });
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setShowExplanation(true);
+      onAnswer(data.isCorrect);
       queryClient.invalidateQueries({ queryKey: ["/api/attempts"] });
     },
   });
