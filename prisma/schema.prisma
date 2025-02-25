@@ -1,6 +1,7 @@
 datasource db {
     provider = "postgresql"
-    url      = env("DB_URL")
+    url      = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -8,8 +9,8 @@ generator client {
 }
 
 model User {
-    id       Int     @id @default(autoincrement())
-    username String  @unique
-    password String
-    token    String? @unique
+    id          Int     @id @default(autoincrement())
+    username    String  @unique
+    password    String?
+    firebaseUid String  @unique @map("firebase_uid")
 }

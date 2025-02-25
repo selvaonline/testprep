@@ -1,40 +1,49 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+// User schemas
+export const userSchema = z.object({
+  id: z.number(),
+  username: z.string(),
+  password: z.string().nullable(),
+  firebaseUid: z.string()
 });
 
-export const questions = pgTable("questions", {
-  id: serial("id").primaryKey(),
-  question: text("question").notNull(),
-  answer: text("answer").notNull(),
-  grade: integer("grade").notNull(),
-  subject: text("subject").notNull(),
-  explanation: text("explanation").notNull(),
+export const insertUserSchema = userSchema.omit({ id: true });
+
+// Question schemas
+export const questionSchema = z.object({
+  id: z.number(),
+  question: z.string(),
+  answer: z.string(),
+  grade: z.number(),
+  subject: z.string(),
+  explanation: z.string()
 });
 
-export const attempts = pgTable("attempts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  questionId: integer("question_id").notNull(),
-  isCorrect: boolean("is_correct").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+export const insertQuestionSchema = questionSchema.omit({ id: true });
+
+// Attempt schemas
+export const attemptSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  questionId: z.number(),
+  isCorrect: z.boolean(),
+  createdAt: z.date()
 });
 
-export const insertUserSchema = createInsertSchema(users)
-  .pick({
-    username: true,
-    password: true,
-  });
+export const insertAttemptSchema = attemptSchema.omit({ id: true, createdAt: true });
 
-export const insertQuestionSchema = createInsertSchema(questions);
-export const insertAttemptSchema = createInsertSchema(attempts);
+// Login data schema
+export const loginDataSchema = z.object({
+  username: z.string(),
+  password: z.string()
+});
 
+// Types
+export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-export type Question = typeof questions.$inferSelect;
-export type Attempt = typeof attempts.$inferSelect;
+export type Question = z.infer<typeof questionSchema>;
+export type InsertQuestion = z.infer<typeof insertQuestionSchema>;
+export type Attempt = z.infer<typeof attemptSchema>;
+export type InsertAttempt = z.infer<typeof insertAttemptSchema>;
+export type LoginData = z.infer<typeof loginDataSchema>;

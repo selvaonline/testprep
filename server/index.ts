@@ -4,8 +4,6 @@ import { createServer } from "http";
 import cors from 'cors';
 import { setupVite } from "./vite.dev";
 import { PrismaClient } from '@prisma/client';
-import authRoutes from './routes/auth';
-import { verifyToken } from './auth';
 import { registerRoutes } from './routes';
 
 const app = express();
@@ -20,13 +18,7 @@ async function startServer() {
     }));
     app.use(express.json());
 
-    // Auth routes
-    app.use('/api', authRoutes);
-
-    // Protected routes
-    app.use('/api', verifyToken);
-
-    // Register other routes
+    // Register all routes (including auth)
     await registerRoutes(app);
 
     const server = createServer(app);

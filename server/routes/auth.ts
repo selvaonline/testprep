@@ -1,114 +1,90 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import { Router } from "express";
+import { prisma } from "../lib/prisma";
+import { auth } from "../lib/firebase-admin";
+import { User } from "@shared/schema";
 
-const router = express.Router();
-const prisma = new PrismaClient();
+const router = Router();
 
-router.post("/register", async (req, res, next) => {
+router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { token } = req.body;
+    
+    // Verify Firebase token
+    const decodedToken = await auth.verifyIdToken(token);
+    const { uid, email } = decodedToken;
 
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        error: "Username and password are required",
-      });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-      const user = await prisma.user.create({
-        data: {
-          username,
-          password: hashedPassword,
-        },
-      });
-
-      // Generate JWT token
-      const token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET!,
-        { expiresIn: '24h' }
-      );
-
-      // Remove sensitive data
-      const { password: _, ...userWithoutPassword } = user;
-
-      res.status(201).json({
-        success: true,
-        ...userWithoutPassword,
-        token
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // P2002 is the error code for unique constraint violation
-        if (e.code === 'P2002') {
-          return res.status(400).json({
-            success: false,
-            error: "User already exists",
-          });
-        }
-      }
-      throw e;
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        error: "Username and password are required",
-      });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { username },
+    // Find or create user in our database
+    let user = await prisma.user.findUnique({
+      where: { firebaseUid: uid },
     });
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid credentials",
+      user = await prisma.user.create({
+        data: {
+          username: email || uid,
+          firebaseUid: uid,
+          password: null
+        },
       });
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    res.json(user);
+  } catch (error: any) {
+    console.error("Login error:", error);
+    res.status(401).json({ error: error.message });
+  }
+});
 
-    if (!isValidPassword) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid credentials",
-      });
-    }
+router.post("/register", async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    // Verify Firebase token
+    const decodedToken = await auth.verifyIdToken(token);
+    const { uid, email } = decodedToken;
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET!,
-      { expiresIn: '24h' }
-    );
-
-    // Remove sensitive data
-    const { password: _, ...userWithoutPassword } = user;
-
-    res.status(200).json({
-      success: true,
-      ...userWithoutPassword,
-      token
+    // Create user in our database
+    const user = await prisma.user.create({
+      data: {
+        username: email || uid,
+        firebaseUid: uid,
+        password: null
+      },
     });
-  } catch (error) {
-    next(error);
+
+    res.json(user);
+  } catch (error: any) {
+    console.error("Registration error:", error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/logout", (req, res) => {
+  res.json({ message: "Logged out successfully" });
+});
+
+router.get("/user", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await auth.verifyIdToken(token);
+
+    const user = await prisma.user.findUnique({
+      where: { firebaseUid: decodedToken.uid },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error: any) {
+    console.error("Auth error:", error);
+    res.status(401).json({ error: error.message });
   }
 });
 

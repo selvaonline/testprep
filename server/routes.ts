@@ -1,14 +1,19 @@
 import { createServer } from "http";
 import express, { Request, Response } from "express";
-import { setupAuth, verifyToken } from "./auth";
-import { generateQuestion, evaluateAnswer, type GeneratedQuestion } from "./openai";
+import { verifyToken } from "./auth";
+import { generateQuestion, evaluateAnswer } from "./openai";
 import { storage } from "./storage";
 import { AuthenticatedRequest } from "./types";
+import authRoutes from "./routes/auth";
 
 export async function registerRoutes(app: express.Express) {
-  setupAuth(app);
+  // Auth routes
+  app.use("/api", authRoutes);
 
-  app.get("/api/questions/:grade/:subject", verifyToken, async (req: Request, res: Response) => {
+  // Protected routes
+  app.use("/api", verifyToken);
+
+  app.get("/api/questions/:grade/:subject", async (req: Request, res: Response) => {
     const { grade, subject } = req.params;
     console.log('GET questions params:', { grade, subject, types: { grade: typeof grade, subject: typeof subject } });
     
@@ -34,7 +39,7 @@ export async function registerRoutes(app: express.Express) {
     res.json(questions);
   });
 
-  app.post("/api/questions/generate", verifyToken, async (req: Request, res: Response) => {
+  app.post("/api/questions/generate", async (req: Request, res: Response) => {
     console.log('Generate request body (raw):', req.body);
     
     const { grade, subject, concept } = req.body;
@@ -72,8 +77,7 @@ export async function registerRoutes(app: express.Express) {
     }
   });
 
-  app.post("/api/questions/:id/evaluate", verifyToken, async (req: Request, res: Response) => {
-
+  app.post("/api/questions/:id/evaluate", async (req: Request, res: Response) => {
     const { id } = req.params;
     const { answer } = req.body;
 
@@ -103,7 +107,7 @@ export async function registerRoutes(app: express.Express) {
     }
   });
 
-  app.get("/api/attempts", verifyToken, async (req: Request, res: Response) => {
+  app.get("/api/attempts", async (req: Request, res: Response) => {
     const attempts = await storage.getAttempts((req as AuthenticatedRequest).user.id);
     res.json(attempts);
   });
