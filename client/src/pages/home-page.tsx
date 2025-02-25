@@ -13,15 +13,15 @@ export default function HomePage() {
     queryKey: ["/api/attempts"],
   });
 
-  const subjects = ["Math", "Reading", "Science", "Social Studies"];
-  const grades = [3, 4, 5, 6, 7, 8];
-  const [selectedGrade, setSelectedGrade] = useState(3);
+  const subjects = ["Math", "Reading"];
+  const grades = [3, 4, 5, 6, 7, 8, "High School"];
+  const [expandedGrade, setExpandedGrade] = useState<string | number>(3);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/95">
-      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-white">
+      <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-blue-600">
             TestPrep
           </h1>
           <div className="flex items-center gap-4">
@@ -37,44 +37,39 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[2fr,1fr] gap-12">
-          <div className="space-y-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
-                Practice Tests
-              </h2>
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium">Grade:</span>
-                <select
-                  value={selectedGrade}
-                  onChange={(e) => setSelectedGrade(Number(e.target.value))}
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          <div className="space-y-0 border rounded-lg overflow-hidden">
+            {grades.map((grade) => (
+              <div key={grade} className="border-b last:border-b-0">
+                <button
+                  onClick={() => setExpandedGrade(grade)}
+                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50"
                 >
-                  {grades.map((grade) => (
-                    <option key={grade} value={grade}>
-                      Grade {grade}
-                    </option>
-                  ))}
-                </select>
+                  <span className="text-lg font-semibold text-blue-600">
+                    Grade {grade}
+                  </span>
+                  <span className={`transform transition-transform ${expandedGrade === grade ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+                {expandedGrade === grade && (
+                  <div className="px-6 py-4 space-y-4">
+                    {subjects.map((subject) => (
+                      <TestCategory
+                        key={subject}
+                        grade={typeof grade === 'number' ? grade : 12}
+                        subject={subject}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="space-y-6">
-              {subjects.map((subject) => {
-                if (!user) return null;
-                return (
-                  <TestCategory
-                    key={subject}
-                    grade={selectedGrade}
-                    subject={subject}
-                  />
-                );
-              })}
-            </div>
+            ))}
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Your Progress</h2>
+          <div className="bg-white rounded-lg p-6 border">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Your Progress</h2>
             <StudentProgress attempts={attempts || []} />
           </div>
         </div>
