@@ -15,6 +15,9 @@ async function startServer() {
     // Middleware
     app.use(cors({
       origin: process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://testprepai-c4d71c7177be.herokuapp.com",
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      exposedHeaders: ['Authorization'],
       credentials: true
     }));
     app.use(express.json());

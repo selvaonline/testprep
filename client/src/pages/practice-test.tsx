@@ -209,12 +209,38 @@ export default function PracticeTest() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
               Grade {gradeNum} {decodedSubject} Practice Test
             </h2>
-            <div className="flex items-center gap-4">
-              <div className="h-[2px] flex-grow bg-gradient-to-r from-primary/20 to-transparent" />
-              <p className="text-sm font-medium text-muted-foreground">
-                Question {currentQuestionIndex + 1} of {(questions || []).length}
-              </p>
-              <div className="h-[2px] flex-grow bg-gradient-to-l from-primary/20 to-transparent" />
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="h-[2px] flex-grow bg-gradient-to-r from-primary/20 to-transparent" />
+                <p className="text-sm font-medium text-muted-foreground">
+                  Question {currentQuestionIndex + 1} of {(questions || []).length}
+                </p>
+                <div className="h-[2px] flex-grow bg-gradient-to-l from-primary/20 to-transparent" />
+              </div>
+              <div className="flex justify-between items-center p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20">
+                <div className="flex items-center gap-8">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-muted-foreground">Correct</p>
+                    <p className="text-2xl font-bold text-green-500">
+                      {Object.values(answers).filter(a => a === 'correct').length}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-muted-foreground">Wrong</p>
+                    <p className="text-2xl font-bold text-red-500">
+                      {Object.values(answers).filter(a => a === 'incorrect').length}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-muted-foreground">Accuracy</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {Object.keys(answers).length === 0 ? '0%' : 
+                      Math.round((Object.values(answers).filter(a => a === 'correct').length / Object.keys(answers).length) * 100) + '%'
+                    }
+                  </p>
+                </div>
+              </div>
             </div>
           </header>
 
@@ -257,11 +283,10 @@ export default function PracticeTest() {
                   }));
                 }}
                 onNext={() => {
-                  if (questions && currentQuestionIndex < questions.length - 1) {
-                    setCurrentQuestionIndex(i => i + 1);
-                  } else {
-                    generateQuestionMutation.mutate();
-                  }
+                  generateQuestionMutation.mutate();
+                  queryClient.invalidateQueries({ 
+                    queryKey: [`questions-${gradeNum}-${decodedSubject}`]
+                  });
                 }} 
               />
               <div className="flex justify-end">

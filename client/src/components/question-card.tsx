@@ -47,7 +47,7 @@ export default function QuestionCard({ question, onNext, onAnswer }: QuestionCar
               variant={answer === option ? "default" : "outline"}
               className={`w-full justify-start p-4 h-auto text-left transition-all duration-200 ${
                 answer === option 
-                  ? "bg-gradient-to-r from-primary to-primary-foreground text-primary-foreground" 
+                  ? "bg-[#22c55e] text-white" 
                   : "hover:border-primary/50"
               }`}
               onClick={() => !showExplanation && setAnswer(option)}
@@ -62,6 +62,7 @@ export default function QuestionCard({ question, onNext, onAnswer }: QuestionCar
             </Button>
           ))}
         </div>
+
 
         {!showExplanation ? (
           <Button
@@ -96,12 +97,20 @@ export default function QuestionCard({ question, onNext, onAnswer }: QuestionCar
                 {evaluateMutation.data?.explanation}
               </AlertDescription>
             </Alert>
-            <Button 
-              className="w-full h-12 bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity"
-              onClick={onNext}
-            >
-              Next Question
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                className="flex-1 h-12 bg-gradient-to-r from-primary to-primary-foreground hover:opacity-90 transition-opacity"
+                onClick={onNext}
+              >
+                Next Question
+              </Button>
+              <Button
+                className="flex-1 h-12 bg-[#E67E23] hover:opacity-90 text-white"
+                onClick={onNext}
+              >
+                Generate New Question
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

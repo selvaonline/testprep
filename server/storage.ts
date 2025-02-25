@@ -66,6 +66,11 @@ export class MemStorage {
     );
   }
 
+  async getQuestionById(id: number): Promise<StoredQuestion | undefined> {
+    console.log('Storage: Getting question by id:', { id });
+    return this.questions.get(id);
+  }
+
   async addQuestion(question: GeneratedQuestion): Promise<StoredQuestion> {
     const parsedGrade = Number(question.grade);
     console.log('Storage: Adding question:', { grade: parsedGrade, type: typeof parsedGrade });

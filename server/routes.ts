@@ -82,8 +82,7 @@ export async function registerRoutes(app: express.Express) {
     const { answer } = req.body;
 
     try {
-      const questions = await storage.getQuestions(0, "");
-      const question = questions.find((q) => q.id === parseInt(id));
+      const question = await storage.getQuestionById(parseInt(id));
       
       if (!question) {
         return res.status(404).send("Question not found");
