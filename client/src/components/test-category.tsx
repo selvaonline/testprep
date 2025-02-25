@@ -23,12 +23,6 @@ export default function TestCategory({ grade, subject }: TestCategoryProps) {
         >
           {subject}
         </button>
-        <div className="flex gap-2">
-          <a href="#" className="text-blue-600 hover:underline text-sm">Test Form</a>
-          <a href="#" className="text-blue-600 hover:underline text-sm">Answer Key</a>
-          <a href="#" className="text-blue-600 hover:underline text-sm">Item Rationale</a>
-          <a href="#" className="text-blue-600 hover:underline text-sm">Student Expectations Tested</a>
-        </div>
       </div>
       <button
         onClick={handleClick}
