@@ -1,4 +1,8 @@
 import admin from 'firebase-admin';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 let serviceAccount;
 
@@ -12,11 +16,11 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   }
 } else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
   // Read from file if path is provided (for local development)
-  const { readFileSync } = require('fs');
-  const { join } = require('path');
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
   serviceAccount = JSON.parse(
-    readFileSync(join(process.cwd(), serviceAccountPath), 'utf-8')
+    readFileSync(join(__dirname, '..', '..', serviceAccountPath), 'utf-8')
   );
 } else {
   throw new Error('Neither FIREBASE_SERVICE_ACCOUNT nor FIREBASE_SERVICE_ACCOUNT_PATH is set');
