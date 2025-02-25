@@ -210,6 +210,7 @@ export default function PracticeTest() {
               Grade {gradeNum} {decodedSubject} Practice Test
             </h2>
             <div className="space-y-4">
+            <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="h-[2px] flex-grow bg-gradient-to-r from-primary/20 to-transparent" />
                 <p className="text-sm font-medium text-muted-foreground">
@@ -217,6 +218,23 @@ export default function PracticeTest() {
                 </p>
                 <div className="h-[2px] flex-grow bg-gradient-to-l from-primary/20 to-transparent" />
               </div>
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => generateQuestionMutation.mutate()}
+                  disabled={generateQuestionMutation.isPending}
+                  className="bg-[#E67E23] hover:opacity-90 text-white"
+                >
+                  {generateQuestionMutation.isPending ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Generating...</span>
+                    </div>
+                  ) : (
+                    "Generate Questions"
+                  )}
+                </Button>
+              </div>
+            </div>
               <div className="flex justify-between items-center p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20">
                 <div className="flex items-center gap-8">
                   <div className="text-center">
